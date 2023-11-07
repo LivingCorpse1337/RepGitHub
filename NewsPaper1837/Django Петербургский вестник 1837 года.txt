@@ -1,0 +1,102 @@
+from news.models import *
+
+Шаг 1 Создание пользователей (для "Петербургского вестника 1837 года" 
+указал вам специально на 2 автора больше, чтобы вы не сомневались в том, что я разобрался и не списал))):
+	1)userPAS = User.objects.create_user('Pushkin_AS_1799')
+	  userPAS.save()
+	2)userGNV = User.objects.create_user('Gogol_NV_1809')
+	  userGNV.save()
+	3)userLMU = User.objects.create_user('Lermontov_MU_1814')
+	  userLMU.save()
+	4)userBVG = User.objects.create_user('Belinskiy_VG_1811')
+	  userBVG.save()
+
+
+Шаг 2 Создание авторов (писатели, поэты и критики):
+	1)AuthorNumber1 = Author.objects.create(user = userPAS)
+	  AuthorNumber1.save()
+	2)MadAuthorNubmer1 = Author.objects.create(user = userGNV)
+	  MadAuthorNubmer1.save()
+	3)AuthorNumber2 = Author.objects.create(user = userLMU)
+	  AuthorNumber2.save()
+	4)AuthorCritic = Author.objects.create(user = userBVG)
+	  AuthorCritic.save()
+
+Шаг 3 Создание категорий статей:
+	1)DUEL = Category.objects.create (theme = 'DUEL')
+	2)PROS = Category.objects.create (theme = 'PROS')
+	3)POET = Category.objects.create (theme = 'POET')
+	4)CULT = Category.objects.create (theme = 'CULT')
+
+Шаг 4 Написание новостей и статей:
+	1)NewsPost = Post.objects.create(head = "Дантес ранит Пушкина на Черной речке!", text = "Скандалы, интриги и расследования интеллектуального Петербурга! Анонимный пасквиль на французском языке, в котором Пушкину присваивался «патент на звание рогоносца» стал причиной кровавой дуэли, 27 января 1837 года под Петербургом в перелеске близ Комендантской дачи состоялась дуэль, в результате которой Дантес нанес поражение Александру Сергеевичу!..", position = Post.news, author = Author.objects.get(user = userPAS), rating = 100500)
+	  NewsPost.save()
+	2)Auditor = Post.objects.create(head = "Борьба Николая 1 с комедией!", text = "Шок! Сразу после премьеры гоголевского «Ревизора» по императорской инициативе было заказано написание пьесы на тот же сюжет, но с другим финалом: все чиновники-казнокрады должны быть наказаны, что, безусловно, ослабило бы сатирическое звучание «Ревизора»...", position = Post.article, author = Author.objects.get(user = userGNV), rating = 700)
+	  Auditor.save()
+	3)Borodino = Post.objects.create(head = "Бородино", text = "Скажи-ка, дядя, ведь недаром Москва, спалённая пожаром, Французу отдана? Ведь были ж схватки боевые, Да, говорят, ещё какие! Недаром помнит вся Россия Про день Бородина!", position = Post.article, author = Author.objects.get(user = userLMU), rating = 555)
+	  Borodino.save()
+
+
+Шаг 5 Добавление к статьям категории:
+	1)NewsPost.post_category.add(DUEL)
+	2)NewsPost.post_category.add(POET)
+	3)NewsPost.post_category.add(CULT)
+	4)Auditor.post_category.add(PROS)
+	5)Auditor.post_category.add(CULT)
+	6)Borodino.post_category.add(CULT)
+	7)Borodino.post_category.add(POET)
+
+Шаг 6 Добавление комментариев от Лермонтова и Белинского (хе-хе-хе):
+
+	1)com1BVG = Comment.objects.create(head=NewsPost, user=userBVG, text_comment = 'Тридцатым годом внезапно оборвался период Пушкинский, так как кончился и сам Пушкин, а вместе с ним и его влияние', rating = 1500)
+	  com1BVG.save()
+	2)com2BVG = Comment.objects.create(head=Auditor, user=userBVG, text_comment = 'В „Ревизоре“ нет сцен лучших, потому что нет худших, но все превосходны, как необходимые части, художественно образующие собою единое целое, округленное внутренним содержанием, а не внешнею формою, и потому представляющее собою особый и замкнутый в самом себе мир', rating = 500)
+	  com2BVG.save()
+	3)comLMU = Comment.objects.create(head=NewsPost, user=userLMU, text_comment = 'Погиб поэт! — невольник чести, — Пал, оклеветанный молвой, С свинцом в груди и жаждой мести, Поникнув гордой головой!..', rating = 3000)
+	  comLMU.save()
+	4)com3BVG = Comment.objects.create(head=Borodino, user=userBVG, text_comment = 'Дух народа, как и дух частного человека, выказывается вполне только в критические минуты…', rating = 600)
+	  com3BVG.save()
+
+Шаг 7 Обновляем и получаем рейтинги Белинского и Лермонтова (изначально прописал рейтинги на посты, если вызвать .rating, то покажет нолик, соответственно, сначала обновим, потом получим):
+	1)AuthorCritic.update_rating()
+	  AuthorCritic.rating          покажет 2600
+	2)AuthorNumber2.update_rating()
+	  AuthorNumber2.rating           покажет 5265
+
+Шаг 8 Читатели оценивают статьи и комментарии авторов, посылая свои письма на адрес редакции:
+	Borodino.like()
+	Borodino.like()
+	Borodino.like()
+	Borodino.like()
+	comLMU.like()
+	comLMU.like()
+
+	com3BVG.like()
+	com3BVG.like()
+	com3BVG.like()
+	com1BVG.dislike()
+	com1BVG.dislike()
+	com1BVG.dislike()
+	com2BVG.like()
+	com2BVG.like()
+	com2BVG.like()
+
+Шаг 9 Редакция "Вестника" подсчитывает количество отзывов и выводит актуальные рейтинги авторов (Белинский и Лермонтов):
+	1)AuthorCritic.update_rating()
+	  AuthorCritic.rating           покажет 2603
+	2)AuthorNumber2.update_rating()
+	  AuthorNumber2.rating            покажет 5282
+
+Шаг 10 Редакция публикует топ 1837 года:
+	best_post = Post.objects.order_by('-rating').first()    ищем лучшего пользователя, и все данные к нему
+	best_post.author.user.username    	 	  	покажет Pushkin_AS_1799
+	best_post.rating				  	покажет 100500
+	best_post.timing_post				  	покажет datetime.datetime(2023, 11, 7, 19, 26, 22, 15299, tzinfo=datetime.timezone.utc)
+	best_post.head					  	покажет Дантес ранит Пушкина на Черной речке!
+	best_post.preview()				  	покажет Скандалы, интриги и расследования интеллектуального Петербурга! Анонимный пасквиль на французском языке, в котором Пушкину пр...
+	Comment.objects.filter(head = best_post)    	 	выводим, какие комментарии написаны к лучшему посту, обращаюсь через заголовок (head), т.к. в обеих моделях он есть покажет : QuerySet [<Comment: Comment object (1)>, <Comment: Comment object (3)>]
+        r = Comment.objects.get(pk=1)			  	получаем по праймари кею объекты 1 и 3 с присвоением переменных 'r' и 'c'
+	c = Comment.objects.get(pk=3)
+	r.text_comment, r.user, r.rating, r.timing_comment      Выводим все комментарии(дата, пользователь, рейтинг, текст) к этой статье через обращение через переменную и свойства модели
+	c.text_comment, c.user, c.rating, c.timing_comment
+
