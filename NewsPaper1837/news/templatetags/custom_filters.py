@@ -3,7 +3,7 @@ from django import template
 
 register = template.Library()
 
-cens = ['чиновники', 'дуэль', 'император']
+cens = ['чиновники', 'дуэл', 'император']
 
 @register.filter()
 
